@@ -11,16 +11,16 @@ import cors from "cors";
 import { attachUser } from "./src/utils/attachUser.js";
 import cookieParser from "cookie-parser";
 
-dotenv.config();  // No need to pass "./.env"
+dotenv.config();
 
 const app = express();
 
-// CORS FIX
+// ✅ CORS: allow localhost + Vercel frontend
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",            // for development
-      // "https://your-frontend.netlify.app" // uncomment when deployed
+      "http://localhost:5173",
+      "https://url-shortner-alpha-ten.vercel.app",
     ],
     credentials: true,
   })
@@ -30,22 +30,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Attach Middleware
 app.use(attachUser);
 
-// Routes
 app.use("/api/user", user_routes);
 app.use("/api/auth", auth_routes);
 app.use("/api/create", short_url);
 app.get("/:id", redirectFromShortUrl);
 
-// Error Handler
 app.use(errorHandler);
 
-// PORT FIX (IMPORTANT for Render!)
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   connectDB();
   console.log(`Server running on port ${PORT}`);
 });
+
